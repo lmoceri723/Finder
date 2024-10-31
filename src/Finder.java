@@ -6,12 +6,13 @@ import java.io.IOException;
  * for Adventures in Algorithms
  * At Menlo School in Atherton, CA
  *
- * Completed by: [YOUR NAME HERE]
+ * Completed by: Landon Moceri
  **/
 
 public class Finder {
 
     private static final String INVALID = "INVALID KEY";
+    private static final int p = 249998741;
 
     public Finder() {}
 

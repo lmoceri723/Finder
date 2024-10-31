@@ -1,9 +1,6 @@
-Name: YOUR NAME HERE
+Name: Landon Moceri
 
-| Date    |  Time  |                                     Update |
-|:--------|:------:|-------------------------------------------:|
-| April 5 | 9-10pm | I tried to write abstract, efficient code. |
-|         |        |                                            |
-
-
-To add a new row to the table, click into a cell and then hit shift-enter.
+| Date  |     Time      |                                                                                                                                                                                                                                                                                                                                             Update |
+|:------|:-------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 10/29 |  1:15-1:45pm  | I went to the board and started brainstorming a solution. I realized that the data needed to be hashed, and I initially settled on a BST to store the hashes. After talking with classmates, we realized a hashmap would be a better approach. We spent a lot of time ironing out the specific details around how we would implement our approach. |
+| 10/31 | 10:50-11:20am |                                                                                                                We spent a while as a class talking out how we wanted to approach this problem and generalized the concept of a hash map. Then, we did some math to find our ideal prime number for hashing and map size. It came out to 249998741. |
