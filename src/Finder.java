@@ -13,10 +13,9 @@ import java.util.ArrayList;
 
 public class Finder {
 
-    // Constants
     private static final String INVALID = "INVALID KEY";
-    private static final int p = 100003;
-    private static final int radix = 256;
+
+    public Finder() {}
 
     // Pair class to store key-value pairs
     // This is needed, as keys and values are needed to resolve collisions
@@ -24,27 +23,93 @@ public class Finder {
         String key;
         String val;
 
-        Pair(String key, String val) {
+        Pair (String key, String val) {
             this.key = key;
             this.val = val;
         }
     }
 
-    // Array of pair ArrayLists to store the hash table
-    ArrayList<Pair>[] table = (ArrayList<Pair>[]) new ArrayList[p];
+    public class HashMap {
+        // 16553, which will cause the total size to be 16 B * 16443 = 263 KB
+        private final int INITIAL_SIZE = 16553;
+        private final int RADIX = 256;
+        private final double LOAD_FACTOR = 0.5;
 
-    public Finder() {}
 
-    // Hash function to hash a string using polynomial rolling hash
-    public int hash(String key) {
-        int hash = 0;
-        for (int i = 0; i < key.length(); i++) {
-            hash = (hash * radix + key.charAt(i)) % p;
+        private int filledSize = 0;
+        private int tableSize = INITIAL_SIZE;
+
+        Pair[] table;
+
+        public HashMap() {
+            table = new Pair[tableSize];
         }
-        // Add p to ensure the hash is positive
-        hash = (hash + p) % p;
-        return hash;
+
+        // Hash function to hash a string using polynomial rolling hash
+        public int hash(String key, int p) {
+            int hash = 0;
+            for (int i = 0; i < key.length(); i++) {
+                hash = (hash * RADIX + key.charAt(i)) % p;
+            }
+            // Add p to ensure the hash is positive
+            hash = (hash + p) % p;
+            return hash;
+        }
+
+        public void resize() {
+            tableSize *= 2;
+            filledSize = 0;
+            Pair[] newTable = new Pair[tableSize];
+
+            for (Pair pair : table) {
+                if (pair != null) {
+                    insertPrimitive(newTable, pair.key, pair.val);
+                    filledSize++;
+                }
+            }
+
+            table = newTable;
+        }
+
+        public void insert(String key, String val) {
+            if (LOAD_FACTOR * 0.5 <= filledSize) {
+                resize();
+            }
+            insertPrimitive(table, key, val);
+            filledSize++;
+        }
+
+        public void insertPrimitive(Pair[] t, String key, String val) {
+            int hash = hash(key, tableSize);
+            if (t[hash] == null) {
+                t[hash] = new Pair(key, val);
+            } else {
+                int i = hash;
+                while (t[i] != null) {
+                    i++;
+                }
+                t[i] = new Pair(key, val);
+            }
+        }
+
+        public String query(String key) {
+            int hash = hash(key, tableSize);
+            if (table[hash] != null && table[hash].key.equals(key)) {
+                return table[hash].val;
+            } else {
+                int i = hash;
+                while (table[i] != null && !table[i].key.equals(key)) {
+                    i++;
+                }
+                if (table[i] != null) {
+                    return table[i].val;
+                }
+            }
+            return INVALID;
+        }
     }
+
+    private HashMap map = new HashMap();
 
     // This function should build a hash table from the given BufferedReader
     public void buildTable(BufferedReader br, int keyCol, int valCol) throws IOException {
@@ -59,41 +124,15 @@ public class Finder {
             String val = columns[valCol];
 
             // Insert the key-value pair into the hash table
-            insert(key, val);
+            map.insert(key, val);
 
             line = br.readLine();
         }
         br.close();
     }
 
-    // Function to insert a pair into the hash table
-    public void insert(String key, String val){
-        // Hash the key
-        int hash = hash(key);
-
-        // Create an ArrayList if one does not exist
-        if (table[hash] == null) {
-            table[hash] = new ArrayList<>();
-        }
-        // Add the pair to the hash table
-        table[hash].add(new Pair(key, val));
-    }
-
     // Finds whether a value exists for a given key in the hash table
     public String query(String key){
-        // Hash the key
-
-        int hash = hash(key);
-        // Check if the hash table entry is empty
-        if (table[hash] != null) {
-            // Search for the key in the hash table
-            for (Pair pair : table[hash]) {
-                // Return the correct value if the key is found
-                if (pair.key.equals(key)) {
-                    return pair.val;
-                }
-            }
-        }
-        return INVALID;
+        return map.query(key);
     }
 }
